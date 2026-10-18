@@ -24,7 +24,11 @@ Writ adopts Varve's pattern. Written out so this repository stands alone:
   the code (for a session's commit, its responsible human in
   `eng/identities.json` or a delegate), and a signature where the committer is
   a human. A session commits as its agent identity (`Claude (Emil)
-  <claude+emil@okkels-klein.dk>`), SSH-signed when the sandbox can sign.
+  <claude+emil@okkels-klein.dk>`, written by `.claude/hooks/cloud-git-identity.sh`
+  from `CLAUDE_GIT_SIGNING_KEY` in the cloud environment), SSH-signed. A
+  session whose environment carries no agent key commits as the platform's
+  identity, `Claude <noreply@anthropic.com>`, which `eng/identities.json`
+  also lists for the agent, and says so in its record.
 - **A commit message never carries a model's identifier.** A tool's co-author
   trailer naming the product is not one. Prose elsewhere says "developed with
   AI assistance under human review" and names no product.

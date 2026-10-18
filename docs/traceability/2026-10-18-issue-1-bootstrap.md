@@ -72,6 +72,19 @@ id and the identity's key.
 - **The browser is not a Writ host.** Varve's constraint 3 is restated in
   ADR 0005 rather than inherited verbatim.
 
+## Signing
+
+The commits were first made as `Claude (Emil) <claude+emil@okkels-klein.dk>`,
+Varve's agent identity, and GitHub reported them `unknown_key`: this
+session's environment carries no `CLAUDE_GIT_SIGNING_KEY`, only the
+platform's signer, which is bound to `noreply@anthropic.com`. The commits
+were rewritten as `Claude <noreply@anthropic.com>`, the agent's second
+address in `eng/identities.json`, so they verify; the sign-off and the
+session trailer are unchanged. Varve's `.claude/hooks/cloud-git-identity.sh`
+and `.claude/cloud-setup.sh` were brought in so that, once the maintainer
+sets `CLAUDE_GIT_SIGNING_KEY` on the Writ environment at claude.ai/code and
+installs the setup script, later sessions sign as `Claude (Emil)`.
+
 ## Commits
 
 Listed on the pull request. Each carries `Refs #1`, `Signed-off-by: Emil
