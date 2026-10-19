@@ -1,0 +1,58 @@
+<Project>
+
+  <!-- Imported after every project body, so it sees the project's own settings. -->
+
+  <!--
+    ADR 0005 — constraint 2 for packable projects. The IL-prefixed
+    diagnostics are errors in .editorconfig and never enter NoWarn.
+  -->
+  <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+  </PropertyGroup>
+
+  <!--
+    Package metadata (ADR 0003). RepositoryUrl comes from the git remote at
+    pack time through SourceLink. A publishing and versioning ADR is owed
+    before the first package is pushed; MinVer is registered under 0009 until
+    then.
+  -->
+  <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+    <Authors>decision-driven-design</Authors>
+    <Company>decision-driven-design</Company>
+    <Copyright>Copyright (c) 2026 Emil Okkels Klein</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Hafeok/writ</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>architecture-decisions;adr;governance;agents;rdf;sparql;shacl</PackageTags>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedAllSources>true</EmbedAllSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)NOTICE" Pack="true" PackagePath="" Visible="false" />
+    <PackageReference Include="MinVer" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
+  </ItemGroup>
+
+  <!--
+    ADR 0005 — off-the-shelf enforcement for packable projects: the public API
+    baseline beside the project, and one banned-symbol list for the
+    repository, which exists from the first src/ project.
+  -->
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" />
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" Condition="Exists('$(MSBuildProjectDirectory)/PublicAPI.Shipped.txt')" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" Condition="Exists('$(MSBuildProjectDirectory)/PublicAPI.Unshipped.txt')" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)eng/BannedSymbols.txt" Condition="Exists('$(MSBuildThisFileDirectory)eng/BannedSymbols.txt')" />
+  </ItemGroup>
+
+</Project>
