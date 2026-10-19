@@ -15,6 +15,18 @@
 | **Branch** | `claude/bootstrap`, from an empty `main` |
 | **Machine** | a cloud container; .NET SDK 10.0.402 installed in the session with `dotnet-install.sh` |
 
+The history was re-signed in a second session, which wrote no product
+content:
+
+| | |
+|---|---|
+| **Date** | 2026-10-19 |
+| **Tool** | Claude Code 2.1.303, a cloud session started from the Claude desktop app |
+| **Model** | `claude-opus-5-5`, from the session's own metadata |
+| **Session identifier** | `session_01TPvQAkrVW1mLey1hhWRwCA` |
+| **Branch** | `claude/bootstrap`, rewritten in place |
+| **Machine** | a cloud container (environment `env_011CV1nepK2xDgyxPJFr46Db`) carrying `CLAUDE_GIT_SIGNING_KEY`; .NET SDK 10.0.401 preinstalled |
+
 ## The prompts
 
 The session ran in the Writ project, whose project prompt is the summary of
@@ -84,6 +96,22 @@ session trailer are unchanged. Varve's `.claude/hooks/cloud-git-identity.sh`
 and `.claude/cloud-setup.sh` were brought in so that, once the maintainer
 sets `CLAUDE_GIT_SIGNING_KEY` on the Writ environment at claude.ai/code and
 installs the setup script, later sessions sign as `Claude (Emil)`.
+
+The second session ran with the key set, and the hook signed as `Claude
+(Emil) <claude+emil@okkels-klein.dk>` (`SHA256:xDu5EyJd05ROum1g+8Aj1Up3MjE6RbHnI70/xNHljDY`).
+It rewrote the history so that every commit is the agent identity's and
+verifies. The root commit `cfd87d9a45642043059c87a05f1b469ae808c377`, which
+GitHub reported `unknown_key`, was replaced by
+`480256a98d36b5d6b144ecb7625516a1e02139df`: the same empty tree and the same
+message, signed with the agent key. The seven content commits were rebased
+onto it with the author reset to the agent identity, re-signed, and pushed
+over `claude/bootstrap` with a lease on its old head `b6848e9`. Their trees
+are unchanged, and their messages are unchanged byte for byte, trailers
+included: the sign-off, `Refs #1`, and the co-author and `Claude-Session:`
+trailers of the session that wrote the content. `main` was force-pushed with a
+lease on `cfd87d9`. This is the one time `main`'s history may be rewritten: it
+held no content, only the empty root. GitHub reports all eight commits
+`verified: true`, `reason: valid`.
 
 ## Commits
 
