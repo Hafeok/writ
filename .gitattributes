@@ -1,0 +1,16 @@
+# Normalise line endings in the working tree to LF on checkout everywhere.
+# Parsers will meet CRLF as *data*; they must never meet it as an artefact of
+# how the repository was cloned.
+* text=auto eol=lf
+
+# Binary by extension, never normalised.
+*.png     binary
+*.jpg     binary
+*.ico     binary
+*.snk     binary
+*.nupkg   binary
+
+# The W3C test data under tests/w3c/ — rdf-tests, rdf-canon and json-ld-api — are
+# submodules and carry their own .gitattributes. Their byte content is the
+# thing under test (rdf-canon's expected outputs are compared byte for byte);
+# do not normalise it.

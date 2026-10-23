@@ -1,0 +1,64 @@
+<Project>
+
+  <!--
+    Repository-wide build settings, imported before every project body.
+    Taken from Varve's and reduced to what Writ has: ADR 0005 (the inherited
+    constraints), ADR 0009 (the register), ADR 0010 (decision sets).
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <!-- Usings are explicit: a file's dependencies are visible in the file,
+         which matters in a repository whose central rule is about what a
+         compilation may reference. -->
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Two builds of one commit produce the same bytes: G1 starts here. -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' != ''">true</ContinuousIntegrationBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- A package project opts in explicitly, which switches on the checks in
+         Directory.Build.targets. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!--
+    DecisionDriven.Analyzers (ADR 0010): the DD rules, and the generator that
+    turns docs/decisions/ into the types code cites. Build-time only.
+  -->
+  <ItemGroup>
+    <PackageReference Include="DecisionDriven.Analyzers" PrivateAssets="all" IncludeAssets="analyzers;build" />
+  </ItemGroup>
+
+  <!--
+    ArchFamily is the family every Writ.* assembly is in. ArchLayer is per
+    project, declared in each project file from the layer table the first
+    src/ project's ADR decides (ADR 0005); a test assembly declares none.
+    ArchContractTypeAssemblies is set by that same ADR; until then a contract
+    may name the BCL and its own assembly only.
+  -->
+  <PropertyGroup>
+    <ArchFamily>Writ</ArchFamily>
+    <DdLedgerDirectory>$(MSBuildThisFileDirectory)docs/decisions</DdLedgerDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="IsPackable" />
+    <CompilerVisibleProperty Include="OutputType" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,36 @@
+<Project>
+
+  <!--
+    Central package management. THIS FILE IS THE REGISTER (ADR 0009).
+
+    Every PackageVersion carries Adr="NNNN" naming the decision that admits
+    it. Versions are resolved from nuget.org when a package is added, never
+    taken from memory. Nothing is registered before a project references it
+    or a repository-wide file wires it: Varve enters with the store contract's
+    first implementation (ADR 0006), not here.
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="Decision-driven enforcement — build-time only, never shipped">
+    <!-- Latest prerelease on 2026-10-18 (ADR 0009's second exception). Wired
+         to every project by Directory.Build.props. -->
+    <PackageVersion Include="DecisionDriven.Analyzers" Version="0.1.0-preview.8" Adr="0010" />
+  </ItemGroup>
+
+  <ItemGroup Label="Off-the-shelf enforcement — build-time only, never shipped">
+    <!-- Latest stable on 2026-10-18. Wired to packable projects by
+         Directory.Build.targets. -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" Adr="0005" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.6.0" Adr="0005" />
+  </ItemGroup>
+
+  <ItemGroup Label="Versioning — build-time only, never shipped">
+    <!-- Latest stable on 2026-10-18. Under 0009 until the publishing ADR. -->
+    <PackageVersion Include="MinVer" Version="8.0.0" Adr="0009" />
+  </ItemGroup>
+
+</Project>
