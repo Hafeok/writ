@@ -67,3 +67,14 @@ Every session costs a record and an issue. Until the gates exist in `eng/`
 and the ruleset is applied, compliance is by review. The first gates to port
 are `issue-refs`, `dco` and `identities`, in that order, and they are on the
 roadmap before any `src/` project.
+
+## Amendment, 2026-10-26
+
+Adds and changes no meaning (ADR 0001). The cloud environment is provisioned
+by the shared bootstrap,
+[Hafeok/claude-code-bootstrap](https://github.com/Hafeok/claude-code-bootstrap),
+which every cloud environment runs; Writ carries no setup script or identity
+hook of its own ([#16](https://github.com/Hafeok/writ/issues/16)). The agent
+identity under **Decision** is written by the bootstrap's session-start hook
+from `CLAUDE_GIT_SIGNING_KEY`, no longer by `.claude/hooks/cloud-git-identity.sh`,
+which is removed. The identity, the key and the rule are unchanged.
