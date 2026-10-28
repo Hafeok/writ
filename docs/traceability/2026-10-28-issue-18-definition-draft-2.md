@@ -116,3 +116,32 @@ agent identity, and is SSH-signed.
 - `b0b7c92` docs(spec): the specification index under Draft 2
 - `86ab4f0` docs(roadmap): the milestones under Draft 2
 - this record
+
+## Addendum, 2026-10-28
+
+Adds to the record and changes nothing above. After the pull request was
+opened, the maintainer answered its first question: the noun in §4 was not
+intended, and was fixed in the definition. The maintainer's message:
+
+> 1. Not intended; fixed. The attached definition replaces the previous one; one word changed in §4 (“where the shape is a subgraph shape”). Copy it over `docs/product-definition.md` byte for byte as one more commit on the same PR. Nothing else in the file changed.
+> 2. Keep `ModelBackedProposerLivesInBailiff`. It follows from `[D2.9]` and belongs in ADR 0012.
+> 3. Acceptance is mine. I’ll accept 0011 to 0013 after merging #21.
+
+The session copied the corrected text over `docs/product-definition.md`,
+checked it byte-identical with `cmp`, and confirmed that the diff from the
+previous text is that one phrase in §4, "Mappings and bindings": "where the
+realisation is the subgraph shape" now reads "where the shape is a subgraph
+shape". The definition's sha256 is now
+`2c6caed34b27c3b91c09334a9cc4ff9b21e947cd601ccc91a55b3aa3b06808df`,
+replacing `9dd680ef…2ac9d` above. "Realisation" now appears in the file
+only in the D2.8 and D2.9 changelog entries and in "`writ:realisation` is
+never minted".
+
+`ModelBackedProposerLivesInBailiff` stays in ADR 0012 as filed. ADRs 0011
+to 0013 remain unaccepted; the maintainer accepts them after the merge.
+
+Commits after this record's first version, each with the same trailers and
+signature as above:
+
+- `567184c` docs: the product definition, Draft 2 through D2.9, §4 corrected
+- this addendum
