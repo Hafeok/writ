@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted. 2026-10-18.
+Accepted. 2026-10-18. Ruling `AnalyzersStayPublicWithTwoModes` superseded by
+0012 (proposed 2026-10-28) on its acceptance.
 
 ## Context
 
