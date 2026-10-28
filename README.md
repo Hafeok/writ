@@ -9,14 +9,19 @@ changes; they may not accept a decision, and they may not land a change by any
 route but `land`.
 
 A writ is a written order from an authority that commands or forbids a
-specific act. In Writ, an accepted decision is one.
+specific act. In Writ, an accepted decision is one. Writ is the signed
+boundary between reasoning and execution: a proposer, which may be a model,
+writes into the log; a builder writes against a position and is refused by
+`land` when it steps outside it; `explain` replays the derivation with no
+model in it.
 
 ## Status
 
-Bootstrap. The product is defined; nothing is built. The next deliverables
-are the specification pages for the four formats and their conformance
-suites (`docs/spec/`), then the property suite for guarantees G1 to G10
-against an in-memory store, then the first end-to-end slice.
+Bootstrap. The product is defined (Draft 2, through `[D2.9]`); nothing is
+built. The next deliverables are the specification pages for the formats of
+the definition's chapter 4 and their conformance suites (`docs/spec/`), then
+the property suite for guarantees G1 to G11 against an in-memory store, then
+the first end-to-end slice.
 
 ## Documentation
 

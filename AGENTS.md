@@ -8,7 +8,8 @@ act; in Writ an accepted decision is one.
 promise, roles, surface, formats, guarantees, contracts, then implementation.
 Chapters 1 to 6 are the product; chapter 7 may change without them changing.
 Read it before proposing anything structural. Where this file disagrees, the
-definition wins.
+definition wins. It is at Draft 2, through `[D2.9]` (ADR 0011), and a session
+never edits it: a disagreement is a question to the maintainer.
 
 ## The promise
 
@@ -23,7 +24,9 @@ any route but `land`.
 1. **Outside-in.** A change to the surface, formats, guarantees or contracts
    is a change to the definition first; the implementation follows.
 2. **Varve's constraints, inherited** (ADR 0005): 100% managed; Native AOT and
-   trimming compatible; one binary, three ways of running it; minimal
+   trimming compatible; one binary, three ways of running it (embedded
+   `writ`, standalone `writ serve`, a fleet of `serve`s; `gate`, `mcp` and
+   `view` are clients of a `serve`, five profiles in all); minimal
    dependencies, every package by ADR in the register (ADR 0009); current LTS
    .NET and current C#, allocation per quad, per verdict and per term a
    defect; no copied code.
@@ -32,14 +35,18 @@ any route but `land`.
 4. **No API keys, ever.** OIDC and workload identity for servers and CI; SSH
    signatures for acceptance; heavier schemes behind the `Signer` seam.
 5. **Agents never accept** (G3). No code path, tool, flag or configuration
-   lets an agent identity produce an acceptance or a review. Not negotiable
-   for convenience, demos or tests.
-6. **Code commits cite a position.** `Decisions-Position` and
-   `Decisions-Head` on every landed commit; `land` is the only write path.
-7. **Formats under read-forever from the first release** (ADR 0007). Each has
-   a specification page and a conformance suite before any implementation.
+   lets an agent identity produce an acceptance, a review, a grant or a
+   waiver. Not negotiable for convenience, demos or tests.
+6. **Landed changes cite a position.** `Decisions-Position` and
+   `Decisions-Head` in the commit message of every landed code change and in
+   the envelope of every landed graph delta; `land` is the only write path.
+7. **Formats under read-forever from the first release** (ADRs 0007, 0013).
+   Each has a specification page and a conformance suite before any
+   implementation. `writ:realisation` is never minted; the term is binding.
 8. **Nothing learned sits between a decision and a verdict.** The proposer
-   may be a model; the check is SPARQL and SHACL over a log at a position.
+   may be a model, and the model-backed one lives in Bailiff, not here (ADR
+   0012); the check is SPARQL and SHACL over a log at a position, and the
+   only clock it reads is the header clock.
 
 **Stable dependencies**, references strictly downward, same-layer references
 are violations. **Low coupling**: no shared mutable state, no static
@@ -105,16 +112,20 @@ There is no `eng/ci.cs` yet. The first gates to port from Varve are
 
 ## State
 
-Bootstrap (#1): the definition (Draft 1), ADRs 0001–0010 with their decision
-sets filed unaccepted, the build and dependency policy, this file. No `src/`,
-no solution, no gates. Next: the vocabulary and protocol specification pages
-with their conformance suites (`docs/spec/README.md`).
+Bootstrap (#1): ADRs 0001–0010 with their decision sets filed unaccepted, the
+build and dependency policy, this file. The definition is at Draft 2 through
+`[D2.9]` (#18), with ADRs 0011–0013 filed unaccepted. No `src/`, no solution,
+no gates. Next: the vocabulary and protocol specification pages with their
+conformance suites (`docs/spec/README.md`).
 
 ## Never
 
-- An acceptance or a review produced by an agent identity, by any path.
+- An acceptance, a review, a grant or a waiver produced by an agent
+  identity, by any path.
 - A landed change without `Decisions-Position` and `Decisions-Head`, or a
   write path beside `land`.
+- A wall clock read by the engine; a model client or SDK in Writ's binary.
+- An edit to `docs/product-definition.md` by a session.
 - An API key, or any credential scheme other than OIDC and SSH signatures.
 - A learned model between a decision and a verdict.
 - A format written before its specification page and conformance suite
