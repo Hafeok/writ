@@ -18,15 +18,17 @@ takes the next free `0.1.0-preview.N` when it lands.
 | Property suite and the first projects | [#6](https://github.com/Hafeok/writ/issues/6) | #4, #5 | |
 | First slice: the C# file projector and the layer rule | [#7](https://github.com/Hafeok/writ/issues/7) | #6; SHACL part on Varve #13 | |
 | `land`, the only write path | [#8](https://github.com/Hafeok/writ/issues/8) | #7, #4 | |
+| Second slice: the `pf:` guest graph | [#20](https://github.com/Hafeok/writ/issues/20) | #8, #5 | |
 | MCP server over stdio | [#9](https://github.com/Hafeok/writ/issues/9) | #8 | |
 | Proposer | [#10](https://github.com/Hafeok/writ/issues/10) | #9, #5 | |
 | `apply` | [#11](https://github.com/Hafeok/writ/issues/11) | #7 | |
 | Standalone host: `serve`, inbox, remote gate, view | [#12](https://github.com/Hafeok/writ/issues/12) | #8, #9, #11 | |
 | Fixtures, export and import | [#13](https://github.com/Hafeok/writ/issues/13) | #7, #5 | |
-| Roslyn projector and realisation | [#14](https://github.com/Hafeok/writ/issues/14) | #7; the analyzers' two-mode release | |
+| Roslyn projector and binding | [#14](https://github.com/Hafeok/writ/issues/14) | #7; the analyzers' two-mode release | |
 | 1.0 definition | [#15](https://github.com/Hafeok/writ/issues/15) | all above | |
 
-Parallelism: #5 can run beside #4; #11 and #13 can run beside #8 to #10;
+Parallelism: #5 can run beside #4; #20 and #9 can run beside each other
+after #8; #11 and #13 can run beside #8 to #10;
 #14 waits on the analyzers repository and can run beside anything after #7.
 Whichever of two parallel sessions lands second merges `main` and reconciles.
 
@@ -38,6 +40,13 @@ a browser-hosted as-of view.
 
 The definition (Draft 1), ADRs 0001–0010 with their decision sets, the build
 and dependency policy, `AGENTS.md`, this file. No `src/`, no gates.
+
+## Definition Draft 2 — #18
+
+The definition replaced by Draft 2, through `[D2.9]` (ADR 0011); ADR 0004's
+`AnalyzersStayPublicWithTwoModes` superseded by ADR 0012 and ADR 0007's
+`FourFormatsSpecifiedBeforeImplementation` by ADR 0013; this file, the
+specification index, `AGENTS.md` and `README.md` reconciled. No `src/`.
 
 ## Gates and the ruleset — #4
 
@@ -62,9 +71,12 @@ hard constraint 7 forbids any implementation before both have a page and a
 suite.
 
 **Scope.** `docs/spec/vocabulary.md` with every `writ:` term, its invariants,
-a version field and the Turtle served at the IRI; `docs/spec/protocol.md`,
-the ledger's page rewritten against the vocabulary with derived acceptance
-stated; the ledger's conformance fixtures carried over and extended; SHACL
+a version field and the Turtle served at the IRI, including the named graphs,
+guest vocabularies, bindings, the G8 provenance set and the three `check`
+outcomes; `docs/spec/protocol.md`, the ledger's page rewritten against the
+vocabulary with derived acceptance stated, grants with scope, baselines,
+waivers, the header clock, cross-log `basedOn` and the two conformance
+classes; the ledger's conformance fixtures carried over and extended; SHACL
 shapes for both; the blend question (Q2) decided from the Varve spike and
 recorded either way; the domain serving the IRI.
 
@@ -74,18 +86,24 @@ the Turtle is byte-identical to `docs/spec/`.
 
 ## Property suite and the first projects — #6
 
-**Why.** G1 to G10 are the specification; written before the engine, against
+**Why.** G1 to G11 are the specification; written before the engine, against
 an in-memory store, so the engine is built to pass them.
 
-**Scope.** The layering ADR and the first `src/` projects; the vocabulary as
-a C# package; the five contracts as interfaces over the vocabulary; the
-in-memory store; the engine's core (in force at a position, derived
-acceptance, levels, verdicts with provenance, explain); generators and one
+**Scope.** The layering ADR and the first `src/` projects, one assembly per
+contract (definition 7.1) with the analyzer that fails the build when a
+contract assembly references another or the engine references an
+implementation; that ADR also decides `Writ.Store.Abstractions` against ADR
+0005's ban (open question 6); the vocabulary as a C# package; the five
+contracts as interfaces over the vocabulary, Store and Signer mandatory; the
+in-memory store with a writer-stamped header clock; the engine's core (in
+force at a position under grant, derived acceptance, levels, baselines,
+verdicts with provenance, open questions, explain); generators and one
 property per guarantee; `Writ.slnx`; API baselines.
 
-**Gate.** All ten properties pass over the in-memory store; every project is
-AOT-compatible and packable; G3's property includes an agent signer and
-asserts the refusal is recorded.
+**Gate.** All eleven properties pass over the in-memory store; every project
+is AOT-compatible and packable; G3's property includes an agent signer
+attempting an acceptance, a review, a grant and a waiver, and asserts each
+refusal is recorded.
 
 ## First slice — #7
 
@@ -97,7 +115,7 @@ the store contract over Varve, the embedded log in this repository; the layer
 rule as SPARQL `CONSTRUCT` with its violation shape, and as SHACL if
 `Varve.Shacl` exists (Q1, decided by the maintainer before this milestone);
 `check`, `diff`, `explain`; `writ import` of `docs/decisions/` so Writ's own
-ADRs are in Writ's own ledger; the first realisations.
+ADRs are in Writ's own ledger; the first bindings.
 
 **Gate.** `writ check` over this repository at head is clean; a fixture with
 an upward reference is refused with rule and acceptance named; G1, G6, G7, G8
@@ -109,39 +127,68 @@ positions.
 **Why.** G5 and hard constraint 6; until `land` exists Writ checks but does
 not gate.
 
-**Scope.** The two trailers; the minimum-position rule; `writ land` and its
-recorded refusals; the required status check; the landing commit in the
-code-fact graph; this repository gated by its own `land`, with the ADR that
-supersedes ADR 0008's interim rule.
+**Scope.** The two trailers on a patch and the same two fields on a graph
+delta's envelope; the minimum-position rule; clean as no violation outside
+the baselines and no blocking open question; `writ land` and its recorded
+refusals; baselines shrinking on landing and never growing; the required
+status check; the landing commit in the code-fact graph; this repository
+gated by its own `land`, with the ADR that supersedes ADR 0008's interim
+rule.
 
-**Gate.** G5 and G6 over the Varve store; a stale position refused and the
-refusal replayed; the status check red without trailers; the first commit
-landed by `writ land` here is the one that turns the gate on.
+**Gate.** G5, G6 and G11 over the Varve store; a stale position refused and
+the refusal replayed; a landing that adds a violation refused; the status
+check red without trailers; the first commit landed by `writ land` here is
+the one that turns the gate on.
+
+## Second slice: the `pf:` guest graph — #20
+
+**Why.** The log holds graphs under more than one vocabulary, and the
+decision engine with no code in it is first exercised here (definition,
+chapters 1 and 6).
+
+**Scope.** product-core's Turtle export landed as a graph delta with its
+envelope; product-cli's `--strict` structural checks imported as enumerated
+decisions; two grants, the What and the How and code, scoped by SHACL
+targets; the data-conformance open question and the waiver;
+`docs/spec/reports.md` and the behavioural-conformance runner as the first
+reporter; the first `pf:` bindings.
+
+**Gate.** A What change accepted under the What grant only and a How decision
+refused under it; an open question blocks `land` into its graph until a
+decision or a waiver answers it; G2, G8 (`graph`, `runner`) and G11 over the
+Varve store.
 
 ## MCP server — #9
 
 **Why.** The agent's only surface; G3 enforced at the tool boundary.
 
-**Scope.** The server in the one binary over stdio, the verbs minus `accept`
-and `review`, a test that fails if either appears, agent-to-human mapping on
-every call, problem responses stating the position.
+**Scope.** `writ mcp` in the one binary over stdio, the writer while it holds
+the file backend's lock; the tools `propose`, `check --as-of`, `diff`,
+`explain`, `land` and `apply --plan`, and none of `accept`, `review`, grant,
+waiver, `apply`, `export` or `import`, with a test that fails if any appears;
+the resources at the session's acknowledged position; sessions as PROV
+activities in the decision graph, cited by every `propose` and `land`;
+agent-to-human mapping on every call; problem responses stating the position.
 
 **Gate.** A reference client drives every tool; the tool list is exact; a
-call to `accept` by name is refused and logged with the agent as cause.
+call to `accept` by name is refused and logged with the agent as cause; a
+session's open and close replay at their recorded clocks (G6).
 
 ## Proposer — #10
 
 **Why.** Text in, a structured proposal out, never in force by itself; the
 least important part and the one that must stay swappable.
 
-**Scope.** The contract and its scripted double; `propose` over the double;
-G4 refusing a level that does not exceed its inputs'; the first model-backed
-proposer (Azure AI Foundry, OIDC) behind the same contract; `review` and
-`accept` in the CLI with SSH signatures.
+**Scope.** The contract and its scripted double, which is what the shipped
+binary binds (structured proposals; a transcript for `propose <text>`);
+`propose` over the double; G4 refusing a level that does not exceed its
+inputs'; `review` and `accept --baseline` in the CLI with SSH signatures
+under grant. The model-backed proposer is Bailiff's and drives Writ through
+`writ mcp` (ADR 0012); no model SDK enters the register.
 
 **Gate.** Every proposal property runs over the double; a corpus of Varve's
-ADR drafts proposes to valid shapes; an accepted proposal is in force from its
-position and `explain` shows the chain.
+ADR drafts, as transcripts, proposes to valid shapes; an accepted proposal is
+in force from its position and `explain` shows the chain.
 
 ## `apply` — #11
 
@@ -158,9 +205,14 @@ applies never conflicting.
 **Why.** Acceptance from anywhere, a gate a runner reaches with a token, and
 agents on cloud runners.
 
-**Scope.** `writ serve`, the inbox, the remote gate, MCP over HTTP, the as-of
-view, OIDC and workload identity only, `Writ-Min-Position`, every response
-stating its position, the `Signer` seam proven by a second implementation.
+**Scope.** `writ serve` as the single writer, and `writ gate`, `writ mcp` and
+`writ view` as its clients through `Writ.Store.Remote`; the inbox, the remote
+gate, MCP over HTTP with sessions resumed only on a re-proven identity and
+closed at lease expiry, the as-of view; the connection as server state
+exported as OpenTelemetry (open sessions per identity, position lag, a span
+per verb); OIDC and workload identity only, `Writ-Min-Position`, every
+response stating its position, the `Signer` seam proven by a second
+implementation.
 
 **Gate.** Every verb gives the same result embedded and through `serve`; the
 remote gate refuses what `land` refuses; auth tested against an issuer in the
@@ -172,19 +224,22 @@ test and a real one in CI.
 retired (ADR 0004).
 
 **Scope.** `docs/spec/fixtures.md` with its suite; `export` and `import` of
-fixtures; `import` of legacy stores passing the ledger's suite; golden files
-for every released format version.
+fixtures carrying the header clocks, replayed as recorded and live through a
+test clock; `basedOn` references kept at their pinned version and position;
+`import` of a decision package from another log for local acceptance;
+`import` of legacy stores passing the ledger's suite; golden files for every
+released format version.
 
-**Gate.** G10; every legacy fixture imports and re-exports to the same
-canonical bytes; the legacy tool retired.
+**Gate.** G10, including cross-log references; every legacy fixture imports
+and re-exports to the same canonical bytes; the legacy tool retired.
 
-## Roslyn projector and realisation — #14
+## Roslyn projector and binding — #14
 
 **Why.** The second provenance, closing the gaps the file projector reports
 (G8).
 
 **Scope.** The Roslyn projector in the analyzers' second mode, coordinated
-through that repository; compiler-only facts; the realisation for every
+through that repository; compiler-only facts; the binding for every
 attribute the analyzers define; the analyzers' own rules as decisions
 checked by Writ.
 
@@ -193,9 +248,10 @@ mode closes every gap reported on Varve; G8 with both provenances.
 
 ## 1.0 definition — #15
 
-The four formats at version 1 under read-forever with public, passing
-suites; G1 to G10 over both stores, the suite public; one binary, embedded
-and standalone; MCP, proposer, `apply`, `land`, `export`/`import`; this
+The formats of the definition's chapter 4 at version 1 under read-forever
+with public, passing suites; G1 to G11 over both stores, the suite public;
+one binary and its five profiles, embedded and standalone; the `pf:` guest
+graph; MCP, proposer, `apply`, `land`, `export`/`import`; this
 repository governed by its own `land` with its ADRs in its own ledger; the
 legacy ledger retired; the analyzers in both modes; a Context& architecture
 package (Varve's layering as decisions) checked by Writ over Varve as the
@@ -213,3 +269,8 @@ Each has an owner and the milestone that must decide it.
 4. **The IRI's home page and the EU trademark search** (ADRs 0002, 0007).
    Owner: the maintainer. Due: #5.
 5. **Publishing and versioning.** Due: #4.
+6. **`Writ.Store.Abstractions`** (definition 7.1) against ADR 0005's ban on
+   an `Abstractions` package. The ban stands until the layering ADR decides.
+   Owner: the maintainer. Due: #6.
+7. **Refusals per builder as a capability signal** (definition, chapter 8).
+   Decided by evidence; Writ's own log is the first dataset. After #8.

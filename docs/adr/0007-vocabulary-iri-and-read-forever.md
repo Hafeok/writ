@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted. 2026-10-18.
+Accepted. 2026-10-18. Ruling `FourFormatsSpecifiedBeforeImplementation`
+superseded by 0013 (proposed 2026-10-28) on its acceptance.
 
 ## Context
 
